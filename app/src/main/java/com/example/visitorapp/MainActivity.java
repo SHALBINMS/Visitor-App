@@ -13,6 +13,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity {
 
     Button b1,b2;
@@ -42,7 +50,41 @@ public class MainActivity extends AppCompatActivity {
                 getPurpose=e3.getText().toString();
                 getWhomto=e4.getText().toString();
 
-                Toast.makeText(MainActivity.this, getFname+" "+getLname+" "+getPurpose+" "+getWhomto, Toast.LENGTH_SHORT).show();
+                if(getFname.isEmpty()||getLname.isEmpty()||getPurpose.isEmpty()||getWhomto.isEmpty())
+                {
+                    Toast.makeText(getApplicationContext(),"Input all fields",Toast.LENGTH_LONG).show();
+                }
+
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Data Submited",Toast.LENGTH_LONG).show();
+                    callApi();
+                }
+
+            }
+
+            private void callApi() {
+                String apiUrl="https://log-app-demo-api.onrender.com/addvisitor";
+                JSONObject data = new JSONObject();
+                try {
+                    data.put("firstname",getFname);
+                    data.put("lastname",getLname);
+                    data.put("purpose",getPurpose);
+                    data.put("whomToMeet",getWhomto);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+                JsonObjectRequest request = new JsonObjectRequest(
+                        Request.Method.POST,
+                        apiUrl,
+                        data,
+                        response -> Toast.makeText(getApplicationContext(),"Succcess !",Toast.LENGTH_LONG).show(),
+                        error -> Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show()
+                );
+
+                RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+                queue.add(request);
             }
         });
 
